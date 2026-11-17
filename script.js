@@ -8,6 +8,8 @@ const CONFIG = {
   driveUrl: "https://drive.google.com/",
   email: "daoudaka418@gmail.com",
   whatsapp: "221774180104",
+  profileDriveId: "1Dc6GDXudqxJtNRClsU5vlEeo1RbmBMeP",
+  coverDriveId: "",
 };
 
 const GH = "https://github.com/DaoudaKA/";
@@ -170,10 +172,29 @@ document.getElementById("driveLink").href = CONFIG.driveUrl;
 document.getElementById("year").textContent = new Date().getFullYear();
 
 /* ---------- Photo de profil : repli sur les initiales ---------- */
+const driveImg = (id, w) => `https://lh3.googleusercontent.com/d/${id}=w${w}`;
+
 const avatar = document.getElementById("avatarImg");
-const hideAvatar = () => (avatar.style.display = "none");
-avatar.addEventListener("error", hideAvatar);
-if (avatar.complete && avatar.naturalWidth === 0) hideAvatar();
+const avatarSources = [
+  CONFIG.profileDriveId && driveImg(CONFIG.profileDriveId, 600),
+  "assets/profile.jpeg",
+].filter(Boolean);
+let avatarTry = 0;
+avatar.addEventListener("error", () => {
+  avatarTry++;
+  if (avatarTry < avatarSources.length) avatar.src = avatarSources[avatarTry];
+  else avatar.style.display = "none";
+});
+avatar.src = avatarSources[0];
+
+if (CONFIG.coverDriveId) {
+  const coverUrl = driveImg(CONFIG.coverDriveId, 1920);
+  const probe = new Image();
+  probe.onload = () => {
+    document.querySelector(".cover__photo").style.backgroundImage = `url("${coverUrl}")`;
+  };
+  probe.src = coverUrl;
+}
 
 /* ---------- Navigation ---------- */
 const nav = document.getElementById("nav");
